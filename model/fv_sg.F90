@@ -299,7 +299,7 @@ contains
           enddo
        elseif ( nwat==4 ) then
           do i=is,ie
-#ifndef ccpp
+#ifndef CCPP
              q_liq = q0(i,k,liq_wat) + q0(i,k,rainwat)
 #ifdef MULTI_GASES
              cpm(i) = (1.-(q0(i,k,sphum)+q_liq))*cp_air*vicpqd(q0(i,k,:)) + q0(i,k,sphum)*cp_vapor + q_liq*c_liq
@@ -397,7 +397,7 @@ contains
    elseif ( nwat==4 ) then
       do k=1,kbot
          do i=is,ie
-#ifndef ccpp
+#ifndef CCPP
             qcon(i,k) = q0(i,k,liq_wat) + q0(i,k,rainwat)
 #else
             qcon(i,k) = q0(i,k,liq_wat) + q0(i,k,rainwat) + q0(i,k,ice_wat)
@@ -470,7 +470,7 @@ contains
                  elseif ( nwat==3 ) then  ! AM3/AM4
                     qcon(i,km1) = q0(i,km1,liq_wat) + q0(i,km1,ice_wat)
                  elseif ( nwat==4 ) then  ! K_warm_rain scheme with fake ice
-#ifndef ccpp
+#ifndef CCPP
                     qcon(i,km1) = q0(i,km1,liq_wat) + q0(i,km1,rainwat)
 #else
                     qcon(i,km1) = q0(i,km1,liq_wat) + q0(i,km1,ice_wat) +                  &
@@ -596,7 +596,7 @@ contains
             enddo
            elseif ( nwat == 4 ) then
             do i=is,ie
-#ifndef ccpp
+#ifndef CCPP
                q_liq = q0(i,kk,liq_wat) + q0(i,kk,rainwat)
 #ifdef MULTI_GASES
                cpm(i) = (1.-(q0(i,kk,sphum)+q_liq))*cp_air*vicpqd(q0(i,kk,:)) + q0(i,kk,sphum)*cp_vapor + q_liq*c_liq
@@ -984,7 +984,7 @@ contains
    elseif ( nwat==4 ) then
       do k=1,kbot
          do i=is,ie
-#ifndef ccpp
+#ifndef CCPP
             qcon(i,k) = q0(i,k,liq_wat) + q0(i,k,rainwat)
 #else
             qcon(i,k) = q0(i,k,liq_wat) + q0(i,k,rainwat) + q0(i,k,ice_wat)
@@ -1053,7 +1053,7 @@ contains
                  elseif ( nwat==3 ) then  ! AM3/AM4
                     qcon(i,km1) = q0(i,km1,liq_wat) + q0(i,km1,ice_wat)
                  elseif ( nwat==4 ) then  ! K_warm_rain scheme with fake ice
-#ifndef ccpp
+#ifndef CCPP
                     qcon(i,km1) = q0(i,km1,liq_wat) + q0(i,km1,rainwat)
 #else
                     qcon(i,km1) = q0(i,km1,liq_wat) + q0(i,km1,rainwat) + q0(i,km1,ice_wat)
@@ -1177,7 +1177,7 @@ contains
             enddo
            elseif ( nwat == 4 ) then
             do i=is,ie
-#ifndef ccpp
+#ifndef CCPP
                q_liq = q0(i,kk,liq_wat) + q0(i,kk,rainwat)
 #ifdef MULTI_GASES
                cpm(i) = (1.-(q0(i,kk,sphum)+q_liq))*cp_air*vicpqd(q0(i,kk,:)) + q0(i,kk,sphum)*cp_vapor + q_liq*c_liq
