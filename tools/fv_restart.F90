@@ -729,7 +729,7 @@ contains
     integer isd_p, ied_p, jsd_p, jed_p, isc_p, iec_p, jsc_p, jec_p, isg, ieg, jsg,jeg, npx_p, npy_p
     real zvir
     logical process
-    integer :: liq_wat, ice_wat, rainwat, snowwat, graupel
+    integer :: liq_wat, ice_wat, rainwat, snowwat, graupel, hailwat
     real :: qv, dp1, q_liq, q_sol, q_con, cvm, cappa, dp, pt, dz, pkz, rdg
 
     if (PRESENT(proc_in)) then
@@ -759,6 +759,11 @@ contains
       rainwat = get_tracer_index (MODEL_ATMOS, 'rainwat')
       snowwat = get_tracer_index (MODEL_ATMOS, 'snowwat')
       graupel = get_tracer_index (MODEL_ATMOS, 'graupel')
+   elseif (nwat == 7) then
+      rainwat = get_tracer_index (MODEL_ATMOS, 'rainwat')
+      snowwat = get_tracer_index (MODEL_ATMOS, 'snowwat')
+      graupel = get_tracer_index (MODEL_ATMOS, 'graupel')
+      hailwat = get_tracer_index (MODEL_ATMOS, 'hailwat')
    endif
 
     call mpp_get_data_domain( Atm%parent_grid%domain, &

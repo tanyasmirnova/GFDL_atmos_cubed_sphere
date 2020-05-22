@@ -222,7 +222,7 @@ contains
 
       integer :: is,  ie,  js,  je
       integer :: isd, ied, jsd, jed
-      integer :: sphum, liq_wat, ice_wat, rainwat, snowwat, graupel
+      integer :: sphum, liq_wat, ice_wat, rainwat, snowwat, graupel, hailwat
 #ifdef CCPP
       integer :: liq_aero, ice_aero
 #endif
@@ -317,6 +317,7 @@ contains
         rainwat   = get_tracer_index(MODEL_ATMOS, 'rainwat')
         snowwat   = get_tracer_index(MODEL_ATMOS, 'snowwat')
         graupel   = get_tracer_index(MODEL_ATMOS, 'graupel')
+        hailwat   = get_tracer_index(MODEL_ATMOS, 'hailwat')
 #ifdef MULTI_GASES
         spfo      = get_tracer_index(MODEL_ATMOS, 'spfo')
         spfo2     = get_tracer_index(MODEL_ATMOS, 'spfo2')
@@ -339,6 +340,8 @@ contains
         call prt_maxmin('snowwat', Atm(1)%q(:,:,:,snowwat), is, ie, js, je, ng, Atm(1)%npz, 1.)
         if ( graupel > 0 ) &
         call prt_maxmin('graupel', Atm(1)%q(:,:,:,graupel), is, ie, js, je, ng, Atm(1)%npz, 1.)
+        if ( hailwat > 0 ) &
+        call prt_maxmin('hailwat', Atm(1)%q(:,:,:,hailwat), is, ie, js, je, ng, Atm(1)%npz, 1.)
 #ifdef MULTI_GASES
         if ( spfo > 0    ) &
         call prt_maxmin('SPFO',    Atm(1)%q(:,:,:,spfo),    is, ie, js, je, ng, Atm(1)%npz, 1.)
@@ -502,7 +505,7 @@ contains
       real(kind=R_GRID), dimension(2):: p1, p2, p3
       real(kind=R_GRID), dimension(3):: e1, e2, ex, ey
       integer:: i,j,k,nts, ks
-      integer:: liq_wat, ice_wat, rainwat, snowwat, graupel, ntclamt
+      integer:: liq_wat, ice_wat, rainwat, snowwat, graupel, hailwat, ntclamt
       namelist /external_ic_nml/ filtered_terrain, levp, gfs_dwinds, &
                                  checker_tr, nt_checker
 #ifdef GFSL64
@@ -970,6 +973,7 @@ contains
         rainwat = get_tracer_index(MODEL_ATMOS, 'rainwat')
         snowwat = get_tracer_index(MODEL_ATMOS, 'snowwat')
         graupel = get_tracer_index(MODEL_ATMOS, 'graupel')
+        hailwat = get_tracer_index(MODEL_ATMOS, 'hailwat')
         ntclamt = get_tracer_index(MODEL_ATMOS, 'cld_amt')
         if (trim(source) == 'FV3GFS GAUSSIAN NEMSIO FILE') then
          do k=1,npz
@@ -982,6 +986,13 @@ contains
                                Atm(n)%q(i,j,k,rainwat) + &
                                Atm(n)%q(i,j,k,snowwat) + &
                                Atm(n)%q(i,j,k,graupel))
+              elseif ( Atm(n)%flagstruct%nwat == 7 ) then
+                 qt = wt*(1. + Atm(n)%q(i,j,k,liq_wat) + &
+                               Atm(n)%q(i,j,k,ice_wat) + &
+                               Atm(n)%q(i,j,k,rainwat) + &
+                               Atm(n)%q(i,j,k,snowwat) + &
+                               Atm(n)%q(i,j,k,graupel) + &
+                               Atm(n)%q(i,j,k,hailwat))
               else   ! all other values of nwat
                  qt = wt*(1. + sum(Atm(n)%q(i,j,k,2:Atm(n)%flagstruct%nwat)))
               endif
@@ -1003,6 +1014,13 @@ contains
                                Atm(n)%q(i,j,k,rainwat) + &
                                Atm(n)%q(i,j,k,snowwat) + &
                                Atm(n)%q(i,j,k,graupel))
+              elseif ( Atm(n)%flagstruct%nwat == 7 ) then
+                 qt = wt*(1. + Atm(n)%q(i,j,k,liq_wat) + &
+                               Atm(n)%q(i,j,k,ice_wat) + &
+                               Atm(n)%q(i,j,k,rainwat) + &
+                               Atm(n)%q(i,j,k,snowwat) + &
+                               Atm(n)%q(i,j,k,graupel) + &
+                               Atm(n)%q(i,j,k,hailwat))
               else   ! all other values of nwat
                  qt = wt*(1. + sum(Atm(n)%q(i,j,k,2:Atm(n)%flagstruct%nwat)))
               endif
@@ -1499,7 +1517,7 @@ contains
       logical:: found
       integer :: is,  ie,  js,  je
       integer :: isd, ied, jsd, jed
-      integer :: sphum, liq_wat, ice_wat, rainwat, snowwat, graupel
+      integer :: sphum, liq_wat, ice_wat, rainwat, snowwat, graupel, hailwat
 #ifdef MULTI_GASES
       integer :: spfo, spfo2, spfo3
 #else
@@ -1547,6 +1565,7 @@ contains
       rainwat = get_tracer_index(MODEL_ATMOS, 'rainwat')
       snowwat = get_tracer_index(MODEL_ATMOS, 'snowwat')
       graupel = get_tracer_index(MODEL_ATMOS, 'graupel')
+      hailwat = get_tracer_index(MODEL_ATMOS, 'hailwat')
 #ifdef MULTI_GASES
       spfo    = get_tracer_index(MODEL_ATMOS, 'spfo')
       spfo2   = get_tracer_index(MODEL_ATMOS, 'spfo2')
@@ -1564,6 +1583,14 @@ contains
             print *, 'snowwat = ', snowwat
             print *, 'graupel = ', graupel 
          endif
+         if ( Atm(1)%flagstruct%nwat .eq. 7 ) then
+            print *, 'rainwat = ', rainwat
+            print *, 'iec_wat = ', ice_wat
+            print *, 'snowwat = ', snowwat
+            print *, 'graupel = ', graupel 
+            print *, 'hailwat = ', hailwat
+         endif
+
 #ifdef MULTI_GASES
          print *, ' spfo3 = ', spfo3
          print *, ' spfo  = ', spfo
@@ -1878,7 +1905,12 @@ contains
         enddo
       enddo
 
-      qc(:,:,:,graupel) = 0.   ! note Graupel must be tracer #6
+      if ( Atm(1)%flagstruct%nwat .le. 6 ) then
+        qc(:,:,:,graupel) = 0.   ! note Graupel must be tracer #6
+      elseif ( Atm(1)%flagstruct%nwat .eq. 7 ) then
+        qc(:,:,:,graupel) = 0.   ! note Graupel must be tracer #6
+        qc(:,:,:,hailwat) = 0.   ! note Hailwat must be tracer #7
+      end if
 
       deallocate ( qec )
       if(is_master()) write(*,*) 'done interpolate tracers (qec) into cubic (qc)'
@@ -2083,6 +2115,13 @@ contains
                                 Atm(1)%q(i,j,k,rainwat) + &
                                 Atm(1)%q(i,j,k,snowwat) + &
                                 Atm(1)%q(i,j,k,graupel))
+               elseif ( Atm(1)%flagstruct%nwat .eq. 7 ) then
+                  qt = wt*(1. + Atm(1)%q(i,j,k,liq_wat) + &
+                                Atm(1)%q(i,j,k,ice_wat) + &
+                                Atm(1)%q(i,j,k,rainwat) + &
+                                Atm(1)%q(i,j,k,snowwat) + &
+                                Atm(1)%q(i,j,k,graupel) + &
+                                Atm(1)%q(i,j,k,hailwat))
                endif
                m_fac = wt / qt
                do iq=1,ntracers
@@ -2622,7 +2661,7 @@ contains
   real(kind=R_GRID):: pst
 !!! High-precision
   integer i,j,k,l,m, k2,iq
-  integer  sphum, liq_wat, ice_wat, rainwat, snowwat, graupel, cld_amt, liq_aero, ice_aero
+  integer  sphum, liq_wat, ice_wat, rainwat, snowwat, graupel, hailwat, cld_amt, liq_aero, ice_aero
 #ifdef MULTI_GASES
   integer  spfo, spfo2, spfo3
 #else
@@ -2641,6 +2680,7 @@ contains
   rainwat  = get_tracer_index(MODEL_ATMOS, 'rainwat')
   snowwat  = get_tracer_index(MODEL_ATMOS, 'snowwat')
   graupel  = get_tracer_index(MODEL_ATMOS, 'graupel')
+  hailwat  = get_tracer_index(MODEL_ATMOS, 'hailwat')
   cld_amt  = get_tracer_index(MODEL_ATMOS, 'cld_amt')
 #ifdef MULTI_GASES
   spfo     = get_tracer_index(MODEL_ATMOS, 'spfo')
@@ -2678,7 +2718,7 @@ contains
 #endif
 
 !$OMP parallel do default(none) &
-!$OMP             shared(sphum,liq_wat,rainwat,ice_wat,snowwat,graupel,liq_aero,ice_aero,source,   &
+!$OMP             shared(sphum,liq_wat,rainwat,ice_wat,snowwat,graupel,hailwat,liq_aero,ice_aero,source,   &
 !$OMP                    cld_amt,ncnst,npz,is,ie,js,je,km,k2,ak0,bk0,psc,t_in,zh,omga,qa,Atm,z500) &
 !$OMP             private(l,m,pst,pn,gz,pe0,pn0,pe1,pn1,dp2,qp,qn1,gz_fv)
   do 5000 j=js,je
@@ -2900,6 +2940,50 @@ contains
          enddo
       enddo
    endif
+   if ( Atm%flagstruct%nwat .eq. 7 ) then
+      do k=1,npz
+         do i=is,ie
+            qn1(i,k) = Atm%q(i,j,k,liq_wat)
+            Atm%q(i,j,k,rainwat) = 0.
+            Atm%q(i,j,k,snowwat) = 0.
+            Atm%q(i,j,k,graupel) = 0.
+            Atm%q(i,j,k,hailwat) = 0.
+!            if (cld_amt .gt. 0) Atm%q(i,j,k,cld_amt) = 0.
+            if ( Atm%pt(i,j,k) > 273.16 ) then       ! > 0C all liq_wat
+               Atm%q(i,j,k,liq_wat) = qn1(i,k)
+               Atm%q(i,j,k,ice_wat) = 0.
+#ifdef ORIG_CLOUDS_PART
+            else if ( Atm%pt(i,j,k) < 258.16 ) then  ! < -15C all ice_wat
+               Atm%q(i,j,k,liq_wat) = 0.
+               Atm%q(i,j,k,ice_wat) = qn1(i,k)
+            else                                     ! between -15~0C: linear interpolation              
+               Atm%q(i,j,k,liq_wat) = qn1(i,k)*((Atm%pt(i,j,k)-258.16)/15.)
+               Atm%q(i,j,k,ice_wat) = qn1(i,k) - Atm%q(i,j,k,liq_wat)
+            endif
+#else
+            else if ( Atm%pt(i,j,k) < 233.16 ) then  ! < -40C all ice_wat
+               Atm%q(i,j,k,liq_wat) = 0.
+               Atm%q(i,j,k,ice_wat) = qn1(i,k)
+            else
+               if ( k.eq.1 ) then  ! between [-40,0]: linear interpolation
+                  Atm%q(i,j,k,liq_wat) = qn1(i,k)*((Atm%pt(i,j,k)-233.16)/40.)
+                  Atm%q(i,j,k,ice_wat) = qn1(i,k) - Atm%q(i,j,k,liq_wat)
+               else
+                 if (Atm%pt(i,j,k)<258.16 .and. Atm%q(i,j,k-1,ice_wat)>1.e-5 ) then
+                    Atm%q(i,j,k,liq_wat) = 0.
+                    Atm%q(i,j,k,ice_wat) = qn1(i,k)
+                 else  ! between [-40,0]: linear interpolation
+                    Atm%q(i,j,k,liq_wat) = qn1(i,k)*((Atm%pt(i,j,k)-233.16)/40.)
+                    Atm%q(i,j,k,ice_wat) = qn1(i,k) - Atm%q(i,j,k,liq_wat)
+                 endif
+               endif
+            endif
+#endif
+            call mp_auto_conversion(Atm%q(i,j,k,liq_wat), Atm%q(i,j,k,rainwat),  &
+                                    Atm%q(i,j,k,ice_wat), Atm%q(i,j,k,snowwat) )
+         enddo
+      enddo
+   endif
   endif ! data source /= FV3GFS GAUSSIAN NEMSIO FILE
 
 ! For GFS spectral input, omega in pa/sec is stored as w in the input data so actual w(m/s) is calculated
@@ -2982,7 +3066,7 @@ contains
   real(kind=R_GRID):: pst
   real, dimension(Atm%bd%is:Atm%bd%ie,Atm%bd%js:Atm%bd%je):: z500
 !!! High-precision
-  integer:: sphum, liq_wat, ice_wat, rainwat, snowwat, graupel, cld_amt
+  integer:: sphum, liq_wat, ice_wat, rainwat, snowwat, graupel, hailwat, cld_amt
 #ifdef MULTI_GASES
   integer:: spfo, spfo2, spfo3
 #else
@@ -3004,6 +3088,7 @@ contains
     rainwat = get_tracer_index(MODEL_ATMOS, 'rainwat')
     snowwat = get_tracer_index(MODEL_ATMOS, 'snowwat')
     graupel = get_tracer_index(MODEL_ATMOS, 'graupel')
+    hailwat = get_tracer_index(MODEL_ATMOS, 'hailwat')
     cld_amt = get_tracer_index(MODEL_ATMOS, 'cld_amt')
   endif
   if (cld_amt .gt. 0) Atm%q(:,:,:,cld_amt) = 0.
@@ -3020,6 +3105,13 @@ contains
       print *, 'ice_wat = ', ice_wat
       print *, 'snowwat = ', snowwat
       print *, 'graupel = ', graupel
+    endif
+    if ( Atm%flagstruct%nwat .eq. 7 ) then
+      print *, 'rainwat = ', rainwat
+      print *, 'ice_wat = ', ice_wat
+      print *, 'snowwat = ', snowwat
+      print *, 'graupel = ', graupel
+      print *, 'hailwat = ', hailwat
     endif
   endif
  

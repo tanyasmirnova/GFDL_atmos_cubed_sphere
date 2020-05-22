@@ -554,15 +554,15 @@ contains
     real, parameter:: cv_vap = cp_vapor - rvgas  !< 1384.5
 
    real, dimension(:,:,:), pointer :: ptBC, sphumBC, qconBC, delpBC, delzBC, cappaBC
-   real, dimension(:,:,:), pointer :: liq_watBC_west, ice_watBC_west, rainwatBC_west, snowwatBC_west, graupelBC_west
-   real, dimension(:,:,:), pointer :: liq_watBC_east, ice_watBC_east, rainwatBC_east, snowwatBC_east, graupelBC_east
-   real, dimension(:,:,:), pointer :: liq_watBC_north, ice_watBC_north, rainwatBC_north, snowwatBC_north, graupelBC_north
-   real, dimension(:,:,:), pointer :: liq_watBC_south, ice_watBC_south, rainwatBC_south, snowwatBC_south, graupelBC_south
+   real, dimension(:,:,:), pointer :: liq_watBC_west, ice_watBC_west, rainwatBC_west, snowwatBC_west, graupelBC_west, hailwatBC_west
+   real, dimension(:,:,:), pointer :: liq_watBC_east, ice_watBC_east, rainwatBC_east, snowwatBC_east, graupelBC_east, hailwatBC_east
+   real, dimension(:,:,:), pointer :: liq_watBC_north, ice_watBC_north, rainwatBC_north, snowwatBC_north, graupelBC_north, hailwatBC_north
+   real, dimension(:,:,:), pointer :: liq_watBC_south, ice_watBC_south, rainwatBC_south, snowwatBC_south, graupelBC_south, hailwatBC_south
 
    real :: dp1, q_liq, q_sol, q_con = 0., cvm, pkz, rdg, cv_air
 
    integer :: i,j,k, istart, iend
-   integer :: liq_wat, ice_wat, rainwat, snowwat, graupel
+   integer :: liq_wat, ice_wat, rainwat, snowwat, graupel, hailwat
    real, parameter:: tice = 273.16 !< For GFS Partitioning
    real, parameter:: t_i0 = 15.
 
@@ -586,6 +586,7 @@ contains
    rainwat = get_tracer_index (MODEL_ATMOS, 'rainwat')
    snowwat = get_tracer_index (MODEL_ATMOS, 'snowwat')
    graupel = get_tracer_index (MODEL_ATMOS, 'graupel')   
+   hailwat = get_tracer_index (MODEL_ATMOS, 'hailwat')   
 
    if (is == 1) then
       if (.not. allocated(dum_West)) then
@@ -695,6 +696,17 @@ contains
       graupelBC_north => dum_north
       graupelBC_south => dum_south
    endif
+   if (hailwat > 0) then
+      hailwatBC_west  => q_BC(hailwat)%west_t1
+      hailwatBC_east  => q_BC(hailwat)%east_t1
+      hailwatBC_north => q_BC(hailwat)%north_t1
+      hailwatBC_south => q_BC(hailwat)%south_t1
+   else
+      hailwatBC_west  => dum_west
+      hailwatBC_east  => dum_east
+      hailwatBC_north => dum_north
+      hailwatBC_south => dum_south
+   endif
 
    if (is == 1) then
       ptBC    =>    pt_BC%west_t1
@@ -708,7 +720,7 @@ contains
       delpBC  =>  delp_BC%west_t1
       delzBC  =>  delz_BC%west_t1
 
-!$OMP parallel do default(none) shared(npz,jsd,jed,isd,zvir,sphumBC,liq_watBC_west,rainwatBC_west,ice_watBC_west,snowwatBC_west,graupelBC_west,qconBC,cappaBC, &
+!$OMP parallel do default(none) shared(npz,jsd,jed,isd,zvir,sphumBC,liq_watBC_west,rainwatBC_west,ice_watBC_west,snowwatBC_west,graupelBC_west,hailwatBC_west,qconBC,cappaBC, &
 !$OMP      rdg,cv_air,delpBC,delzBC,ptBC) &
 !$OMP      private(dp1,q_con,q_liq,q_sol,cvm,pkz)
       do k=1,npz
@@ -722,7 +734,7 @@ contains
          q_liq = q_con - q_sol
 #else
          q_liq = liq_watBC_west(i,j,k) + rainwatBC_west(i,j,k)
-         q_sol = ice_watBC_west(i,j,k) + snowwatBC_west(i,j,k) + graupelBC_west(i,j,k)
+         q_sol = ice_watBC_west(i,j,k) + snowwatBC_west(i,j,k) + graupelBC_west(i,j,k) + hailwatBC_west(i,j,k)
          q_con = q_liq + q_sol
 #endif 
          qconBC(i,j,k) = q_con
@@ -771,7 +783,7 @@ contains
 
 !$OMP parallel do default(none) shared(npz,jsd,istart,iend,zvir,sphumBC, &
 !$OMP      liq_watBC_south,rainwatBC_south,ice_watBC_south,&
-!$OMP      snowwatBC_south,graupelBC_south,qconBC,cappaBC, &
+!$OMP      snowwatBC_south,graupelBC_south,hailwatBC_south,qconBC,cappaBC, &
 !$OMP      rdg,cv_air,delpBC,delzBC,ptBC) &
 !$OMP      private(dp1,q_con,q_liq,q_sol,cvm,pkz)
       do k=1,npz
@@ -785,7 +797,7 @@ contains
          q_liq = q_con - q_sol
 #else
          q_liq = liq_watBC_south(i,j,k) + rainwatBC_south(i,j,k)
-         q_sol = ice_watBC_south(i,j,k) + snowwatBC_south(i,j,k) + graupelBC_south(i,j,k)
+         q_sol = ice_watBC_south(i,j,k) + snowwatBC_south(i,j,k) + graupelBC_south(i,j,k) + hailwatBC_south(i,j,k)
          q_con = q_liq + q_sol
 #endif 
          qconBC(i,j,k) = q_con
@@ -822,7 +834,7 @@ contains
       delpBC  =>  delp_BC%east_t1
       delzBC  =>  delz_BC%east_t1
 !$OMP parallel do default(none) shared(npz,jsd,jed,npx,ied,zvir,sphumBC, &
-!$OMP      liq_watBC_east,rainwatBC_east,ice_watBC_east,snowwatBC_east,graupelBC_east,qconBC,cappaBC, &
+!$OMP      liq_watBC_east,rainwatBC_east,ice_watBC_east,snowwatBC_east,graupelBC_east,hailwatBC_east,qconBC,cappaBC, &
 !$OMP      rdg,cv_air,delpBC,delzBC,ptBC) &
 !$OMP      private(dp1,q_con,q_liq,q_sol,cvm,pkz)
       do k=1,npz
@@ -836,7 +848,7 @@ contains
          q_liq = q_con - q_sol
 #else
          q_liq = liq_watBC_east(i,j,k) + rainwatBC_east(i,j,k)
-         q_sol = ice_watBC_east(i,j,k) + snowwatBC_east(i,j,k) + graupelBC_east(i,j,k)
+         q_sol = ice_watBC_east(i,j,k) + snowwatBC_east(i,j,k) + graupelBC_east(i,j,k) + hailwatBC_east(i,j,k)
          q_con = q_liq + q_sol
 #endif 
          qconBC(i,j,k) = q_con
@@ -883,7 +895,7 @@ contains
       end if
 
 !$OMP parallel do default(none) shared(npz,npy,jed,istart,iend,zvir, &
-!$OMP      sphumBC,liq_watBC_north,rainwatBC_north,ice_watBC_north,snowwatBC_north,graupelBC_north,qconBC,cappaBC, &
+!$OMP      sphumBC,liq_watBC_north,rainwatBC_north,ice_watBC_north,snowwatBC_north,graupelBC_north,hailwatBC_north,qconBC,cappaBC, &
 !$OMP      rdg,cv_air,delpBC,delzBC,ptBC) &
 !$OMP      private(dp1,q_con,q_liq,q_sol,cvm,pkz)
       do k=1,npz
@@ -897,7 +909,7 @@ contains
          q_liq = q_con - q_sol
 #else
          q_liq = liq_watBC_north(i,j,k) + rainwatBC_north(i,j,k)
-         q_sol = ice_watBC_north(i,j,k) + snowwatBC_north(i,j,k) + graupelBC_north(i,j,k)
+         q_sol = ice_watBC_north(i,j,k) + snowwatBC_north(i,j,k) + graupelBC_north(i,j,k) + hailwatBC_north(i,j,k)
          q_con = q_liq + q_sol
 #endif 
          qconBC(i,j,k) = q_con
