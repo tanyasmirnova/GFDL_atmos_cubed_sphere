@@ -813,7 +813,7 @@ contains
                    Atm%gridstruct%dxc, Atm%gridstruct%dyc, Atm%gridstruct%sin_sg, &
                    Atm%flagstruct%n_zs_filter, cnst_0p20*Atm%gridstruct%da_min, &
                    .false., oro_g, Atm%gridstruct%bounded_domain, &
-	           Atm%domain, Atm%bd)
+                    Atm%domain, Atm%bd)
             if ( is_master() ) write(*,*) 'Warning !!! del-2 terrain filter has been applied ', &
                    Atm%flagstruct%n_zs_filter, ' times'
           else if( Atm%flagstruct%nord_zs_filter == 4 ) then
@@ -821,7 +821,7 @@ contains
                    Atm%gridstruct%dx, Atm%gridstruct%dy,   &
                    Atm%gridstruct%dxc, Atm%gridstruct%dyc, Atm%gridstruct%sin_sg, &
                    Atm%flagstruct%n_zs_filter, .false., oro_g, &
-	           Atm%gridstruct%bounded_domain, &
+                   Atm%gridstruct%bounded_domain, &
                    Atm%domain, Atm%bd)
             if ( is_master() ) write(*,*) 'Warning !!! del-4 terrain filter has been applied ', &
                    Atm%flagstruct%n_zs_filter, ' times'
@@ -1617,6 +1617,7 @@ contains
             print *, 'graupel = ', graupel 
             print *, 'hailwat = ', hailwat
          endif
+
 #ifdef MULTI_GASES
          print *, ' spfo3 = ', spfo3
          print *, ' spfo  = ', spfo
@@ -1928,11 +1929,11 @@ contains
         enddo
       enddo
 
-      if (Atm%flagstruct%nwat .eq. 6) then
+      if ( Atm%flagstruct%nwat == 6 ) then
         qc(:,:,:,graupel) = 0.   ! note Graupel must be tracer #6
-      elseif (Atm%flagstruct%nwat .eq. 7) then
+      elseif ( Atm%flagstruct%nwat == 7 ) then
         qc(:,:,:,graupel) = 0.   ! note Graupel must be tracer #6
-        qc(:,:,:,hailwat) = 0.   ! note Hail must be tracer #7
+        qc(:,:,:,hailwat) = 0.   ! note Hail must be tracer #6
       endif
 
       deallocate ( qec )
