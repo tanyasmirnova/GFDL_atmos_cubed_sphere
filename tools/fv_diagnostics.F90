@@ -1549,7 +1549,7 @@ contains
                           isc, iec, jsc, jec, 0, npz, 1.)
           call prt_maxmin('Bottom DZ (m)', Atm(n)%delz(isc:iec,jsc:jec,npz),    &
                           isc, iec, jsc, jec, 0, 1, 1.)
-!         call prt_maxmin('Top DZ (m)', Atm(n)%delz(isc:iec,jsc:jec,1),    &
+!         call prt_maxmin('Top DZ (m)', Atm(n)%delz(is:ie,js:jec,1),    &
 !                         isc, iec, jsc, jec, 0, 1, 1.)
         endif
 
@@ -5572,7 +5572,7 @@ end subroutine eqv_pot
    real, intent(in):: grav, zvir, z_bot, z_top
    real, intent(in), dimension(is-ng:ie+ng,js-ng:je+ng,km):: pt
    real, intent(in), dimension(is:ie,js:je,km):: vort
-   real, intent(in):: delz(is-ng:ie+ng,js-ng:je+ng,km)
+   real, intent(in):: delz(is:ie,js:je,km)
    real, intent(in):: q(is-ng:ie+ng,js-ng:je+ng,km,*)
    real, intent(in):: phis(is-ng:ie+ng,js-ng:je+ng)
    real, intent(in):: peln(is:ie,km+1,js:je)
@@ -5630,7 +5630,7 @@ end subroutine eqv_pot
    real, intent(in):: grav, zvir, z_bot, z_top
    real, intent(in), dimension(is-ng:ie+ng,js-ng:je+ng,km):: pt, w
    real, intent(in), dimension(is:ie,js:je,km):: vort
-   real, intent(in):: delz(is-ng:ie+ng,js-ng:je+ng,km)
+   real, intent(in):: delz(is:ie,js:je,km)
    real, intent(in):: q(is-ng:ie+ng,js-ng:je+ng,km,*)
    real, intent(in):: phis(is-ng:ie+ng,js-ng:je+ng)
    real, intent(in):: peln(is:ie,km+1,js:je)
