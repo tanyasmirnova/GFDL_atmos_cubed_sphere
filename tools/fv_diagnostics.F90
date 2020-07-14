@@ -2842,7 +2842,7 @@ contains
              do j=jsc,jec
 #ifdef USE_COND
                 call moist_cv(isc,iec,isd,ied,jsd,jed,npz,j,k,Atm(n)%flagstruct%nwat,sphum,liq_wat,rainwat, &
-                     ice_wat,snowwat,graupel,Atm(n)%q,Atm(n)%q_con(isc:iec,j,k),cvm)
+                     ice_wat,snowwat,graupel,hailwat,Atm(n)%q,Atm(n)%q_con(isc:iec,j,k),cvm)
                 do i=isc,iec
                    a3(i,j,k) = Atm(n)%pt(i,j,k)*cvm(i)*wk(i,j,k)
                 enddo
