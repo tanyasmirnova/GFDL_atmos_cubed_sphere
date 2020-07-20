@@ -344,6 +344,7 @@ contains
         call prt_maxmin('graupel', Atm%q(:,:,:,graupel), is, ie, js, je, ng, Atm%npz, 1.)
         if ( hailwat > 0 ) &
         call prt_maxmin('hailwat', Atm%q(:,:,:,hailwat), is, ie, js, je, ng, Atm%npz, 1.)
+
 #ifdef MULTI_GASES
         if ( spfo > 0    ) &
         call prt_maxmin('SPFO',    Atm%q(:,:,:,spfo),    is, ie, js, je, ng, Atm%npz, 1.)
@@ -580,7 +581,6 @@ contains
       call get_data_source(source,Atm%flagstruct%regional)
       if (trim(source) == source_fv3gfs) then
          call mpp_error(NOTE, "READING FROM REGRIDDED FV3GFS NEMSIO FILE")
-         levp = 65
       endif
 !
 !--- read in ak and bk from the gfs control file using fms_io read_data ---
@@ -813,7 +813,7 @@ contains
                    Atm%gridstruct%dxc, Atm%gridstruct%dyc, Atm%gridstruct%sin_sg, &
                    Atm%flagstruct%n_zs_filter, cnst_0p20*Atm%gridstruct%da_min, &
                    .false., oro_g, Atm%gridstruct%bounded_domain, &
-                    Atm%domain, Atm%bd)
+	           Atm%domain, Atm%bd)
             if ( is_master() ) write(*,*) 'Warning !!! del-2 terrain filter has been applied ', &
                    Atm%flagstruct%n_zs_filter, ' times'
           else if( Atm%flagstruct%nord_zs_filter == 4 ) then
@@ -821,7 +821,7 @@ contains
                    Atm%gridstruct%dx, Atm%gridstruct%dy,   &
                    Atm%gridstruct%dxc, Atm%gridstruct%dyc, Atm%gridstruct%sin_sg, &
                    Atm%flagstruct%n_zs_filter, .false., oro_g, &
-                   Atm%gridstruct%bounded_domain, &
+	           Atm%gridstruct%bounded_domain, &
                    Atm%domain, Atm%bd)
             if ( is_master() ) write(*,*) 'Warning !!! del-4 terrain filter has been applied ', &
                    Atm%flagstruct%n_zs_filter, ' times'
@@ -1933,7 +1933,7 @@ contains
         qc(:,:,:,graupel) = 0.   ! note Graupel must be tracer #6
       elseif ( Atm%flagstruct%nwat == 7 ) then
         qc(:,:,:,graupel) = 0.   ! note Graupel must be tracer #6
-        qc(:,:,:,hailwat) = 0.   ! note Hail must be tracer #6
+        qc(:,:,:,hailwat) = 0.   ! note Hail must be tracer #7
       endif
 
       deallocate ( qec )

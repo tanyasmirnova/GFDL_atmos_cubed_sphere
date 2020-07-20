@@ -1636,6 +1636,7 @@ contains
       hailwatBC_south => dum_south
    endif
 
+   if (is == 1) then
 
    if (is == 1) then
 

@@ -468,7 +468,6 @@ contains
 
        endif !n==this_grid
 
-
           !!!! NOT NEEDED??
           !Currently even though we do fill in the nested-grid IC from
           ! init_case or external_ic we appear to overwrite it using
@@ -783,6 +782,8 @@ contains
     end do   ! n_tile
 
   end subroutine fv_restart
+  ! </SUBROUTINE> NAME="fv_restart"
+
 
   subroutine fill_nested_grid_topo_halo(Atm, proc_in)
 
