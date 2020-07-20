@@ -1640,7 +1640,7 @@ contains
    if (is == 1) then
 
       call setup_pt_NH_BC_k(pt_BC%west_t1, sphum_BC%west_t1, delp_BC%west_t1, delz_BC%west_t1, &
-           liq_watBC_west, rainwatBC_west, ice_watBC_west, snowwatBC_west, graupelBC_west, hailBC_west, &
+           liq_watBC_west, rainwatBC_west, ice_watBC_west, snowwatBC_west, graupelBC_west, hailwatBC_west, &
 #ifdef USE_COND
            q_con_BC%west_t1, &
 #ifdef MOIST_CAPPA
@@ -1664,7 +1664,7 @@ contains
       end if
 
       call setup_pt_NH_BC_k(pt_BC%south_t1, sphum_BC%south_t1, delp_BC%south_t1, delz_BC%south_t1, &
-           liq_watBC_south, rainwatBC_south, ice_watBC_south, snowwatBC_south, graupelBC_south, hailBC_south, &
+           liq_watBC_south, rainwatBC_south, ice_watBC_south, snowwatBC_south, graupelBC_south, hailwatBC_south, &
 #ifdef USE_COND
            q_con_BC%south_t1, &
 #ifdef MOIST_CAPPA
@@ -1678,7 +1678,7 @@ contains
    if (ie == npx-1) then
 
       call setup_pt_NH_BC_k(pt_BC%east_t1, sphum_BC%east_t1, delp_BC%east_t1, delz_BC%east_t1, &
-           liq_watBC_east, rainwatBC_east, ice_watBC_east, snowwatBC_east, graupelBC_east, hailBC_east, &
+           liq_watBC_east, rainwatBC_east, ice_watBC_east, snowwatBC_east, graupelBC_east, hailwatBC_east, &
 #ifdef USE_COND
            q_con_BC%east_t1, &
 #ifdef MOIST_CAPPA
@@ -1701,7 +1701,7 @@ contains
       end if
 
       call setup_pt_NH_BC_k(pt_BC%north_t1, sphum_BC%north_t1, delp_BC%north_t1, delz_BC%north_t1, &
-           liq_watBC_north, rainwatBC_north, ice_watBC_north, snowwatBC_north, graupelBC_north, hailBC_north, &
+           liq_watBC_north, rainwatBC_north, ice_watBC_north, snowwatBC_north, graupelBC_north, hailwatBC_north, &
 #ifdef USE_COND
            q_con_BC%north_t1, &
 #ifdef MOIST_CAPPA
@@ -1715,7 +1715,7 @@ contains
 
 
  subroutine setup_pt_NH_BC_k(ptBC,sphumBC,delpBC,delzBC, &
-                             liq_watBC,rainwatBC,ice_watBC,snowwatBC,graupelBC,hailBC, &
+                             liq_watBC,rainwatBC,ice_watBC,snowwatBC,graupelBC,hailwatBC, &
 #ifdef USE_COND
                              q_conBC, &
 #ifdef MOIST_CAPPA
@@ -1727,7 +1727,7 @@ contains
    integer, intent(IN) :: isd_BC, ied_BC, istart, iend, jstart, jend, npz
    real, intent(OUT), dimension(isd_BC:ied_BC,jstart:jend,npz) :: ptBC
    real, intent(IN),  dimension(isd_BC:ied_BC,jstart:jend,npz) :: sphumBC, delpBC, delzBC
-   real, intent(IN),  dimension(isd_BC:ied_BC,jstart:jend,npz) :: liq_watBC,rainwatBC,ice_watBC,snowwatBC,graupelBC,hailBC
+   real, intent(IN),  dimension(isd_BC:ied_BC,jstart:jend,npz) :: liq_watBC,rainwatBC,ice_watBC,snowwatBC,graupelBC,hailwatBC
 #ifdef USE_COND
    real, intent(OUT), dimension(isd_BC:ied_BC,jstart:jend,npz) ::   q_conBC
 #ifdef MOIST_CAPPA
@@ -1752,7 +1752,7 @@ contains
 !!$   write(*, '(A, 7I5)') 'setup_pt_NH_BC_k', mpp_pe(), isd, ied, istart, iend, lbound(ptBC,1), ubound(ptBC,1)
 !!$!!! END DEBUG CODE
 
-!$OMP parallel do default(none) shared(istart,iend,jstart,jend,npz,zvir,ptBC,sphumBC,delpBC,delzBC,liq_watBC,rainwatBC,ice_watBC,snowwatBC,graupelBC, &
+!$OMP parallel do default(none) shared(istart,iend,jstart,jend,npz,zvir,ptBC,sphumBC,delpBC,delzBC,liq_watBC,rainwatBC,ice_watBC,snowwatBC,graupelBC,hailwatBC, &
 #ifdef USE_COND
 !$OMP                                  q_conBC, &
 #ifdef MOIST_CAPPA
@@ -1767,7 +1767,7 @@ contains
          dp1 = zvir*sphumBC(i,j,k)
 #ifdef USE_COND
          q_liq = liq_watBC(i,j,k) + rainwatBC(i,j,k)
-         q_sol = ice_watBC(i,j,k) + snowwatBC(i,j,k) + graupelBC(i,j,k) + hailBC(i,j,k)
+         q_sol = ice_watBC(i,j,k) + snowwatBC(i,j,k) + graupelBC(i,j,k) + hailwatBC(i,j,k)
          q_con = q_liq + q_sol
          q_conBC(i,j,k) = q_con
 #ifdef MOIST_CAPPA
