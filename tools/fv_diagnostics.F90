@@ -1549,7 +1549,7 @@ contains
                           isc, iec, jsc, jec, 0, npz, 1.)
           call prt_maxmin('Bottom DZ (m)', Atm(n)%delz(isc:iec,jsc:jec,npz),    &
                           isc, iec, jsc, jec, 0, 1, 1.)
-!         call prt_maxmin('Top DZ (m)', Atm(n)%delz(is:ie,js:jec,1),    &
+!         call prt_maxmin('Top DZ (m)', Atm(n)%delz(isc:iec,jsc:jec,1),    &
 !                         isc, iec, jsc, jec, 0, 1, 1.)
         endif
 
