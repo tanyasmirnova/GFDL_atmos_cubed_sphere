@@ -1638,8 +1638,6 @@ contains
 
    if (is == 1) then
 
-   if (is == 1) then
-
       call setup_pt_NH_BC_k(pt_BC%west_t1, sphum_BC%west_t1, delp_BC%west_t1, delz_BC%west_t1, &
            liq_watBC_west, rainwatBC_west, ice_watBC_west, snowwatBC_west, graupelBC_west, hailwatBC_west, &
 #ifdef USE_COND

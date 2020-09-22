@@ -6347,6 +6347,7 @@ subroutine remap_scalar_nggps_regional_bc(Atm                         &
           call fill_delz
         endif
 !
+      endif
 !
       if(east_bc)then
         i1=istart
