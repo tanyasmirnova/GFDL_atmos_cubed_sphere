@@ -743,6 +743,7 @@ contains
       rain_water_index = get_tracer_index(MODEL_ATMOS, 'rainwat')
       snow_water_index = get_tracer_index(MODEL_ATMOS, 'snowwat')
       graupel_index    = get_tracer_index(MODEL_ATMOS, 'graupel')
+      hailwat_index    = get_tracer_index(MODEL_ATMOS, 'hailwat')
       cld_amt_index    = get_tracer_index(MODEL_ATMOS, 'cld_amt')
       o3mr_index       = get_tracer_index(MODEL_ATMOS, 'o3mr')
 !  write(0,*)' setup_regional_bc'

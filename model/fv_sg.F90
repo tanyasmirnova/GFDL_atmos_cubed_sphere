@@ -2073,7 +2073,7 @@ contains
  integer, intent(in):: is, ie, js, je, ng, kbot
  logical, intent(in):: hydrostatic
  real, intent(in):: dp(is-ng:ie+ng,js-ng:je+ng,kbot)  ! total delp-p
- real, intent(in):: delz(is-ng:,js-ng:,1:)
+ real, intent(in):: delz(is:,js:,1:)
  real, intent(in):: peln(is:ie,kbot+1,js:je)           ! ln(pe)
  logical, intent(in), OPTIONAL :: check_negative
  real, intent(inout), dimension(is-ng:ie+ng,js-ng:je+ng,kbot)::    &
