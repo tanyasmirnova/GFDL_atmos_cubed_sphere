@@ -310,7 +310,7 @@ contains
              cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
 #endif
           enddo
-       elseif ( nwat==5 ) then
+       elseif ( nwat >= 5 ) then
           do i=is,ie
              q_liq = q0(i,k,liq_wat) + q0(i,k,rainwat)
              q_sol = q0(i,k,ice_wat) + q0(i,k,snowwat)
@@ -322,10 +322,13 @@ contains
              cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
 #endif
           enddo
-       elseif ( nwat==6 ) then
+       elseif ( nwat >= 6 ) then
           do i=is,ie
              q_liq = q0(i,k,liq_wat) + q0(i,k,rainwat)
              q_sol = q0(i,k,ice_wat) + q0(i,k,snowwat) + q0(i,k,graupel)
+             IF ( nwat == 7 ) THEN
+             q_sol = q_sol + q0(i,k,hailwat)
+             ENDIF
 #ifdef MULTI_GASES
              cpm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cp_air*vicpqd(q0(i,k,:)) + q0(i,k,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
              cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air*vicvqd(q0(i,k,:)) + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
@@ -334,19 +337,6 @@ contains
              cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
 #endif
           enddo
-       elseif ( nwat == 7 ) then
-          do i=is,ie
-             q_liq = q0(i,k,liq_wat) + q0(i,k,rainwat)
-             q_sol = q0(i,k,ice_wat) + q0(i,k,snowwat) + q0(i,k,graupel) + q0(i,k,hailwat)
-#ifdef MULTI_GASES
-             cpm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cp_air*vicpqd(q0(i,k,:)) + q0(i,k,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
-             cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air*vicvqd(q0(i,k,:)) + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
-#else
-             cpm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cp_air + q0(i,k,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
-             cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
-#endif
-          enddo
-
        endif
 
           do i=is,ie
@@ -406,16 +396,10 @@ contains
             qcon(i,k) = q0(i,k,liq_wat)+q0(i,k,ice_wat)+q0(i,k,snowwat)+q0(i,k,rainwat)
          enddo
       enddo
-   elseif ( nwat==6 ) then
+   else
       do k=1,kbot
          do i=is,ie
             qcon(i,k) = q0(i,k,liq_wat)+q0(i,k,ice_wat)+q0(i,k,snowwat)+q0(i,k,rainwat)+q0(i,k,graupel)
-         enddo
-      enddo
-   elseif ( nwat==7 ) then
-      do k=1,kbot
-         do i=is,ie
-            qcon(i,k) = q0(i,k,liq_wat)+q0(i,k,ice_wat)+q0(i,k,snowwat)+q0(i,k,rainwat)+q0(i,k,graupel)+q0(i,k,hailwat)
          enddo
       enddo
    endif
@@ -619,22 +603,13 @@ contains
                cvm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cv_air + q0(i,kk,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
 #endif
             enddo
-           elseif ( nwat==6 ) then
+           elseif ( nwat >= 6 ) THEN
             do i=is,ie
                q_liq = q0(i,kk,liq_wat) + q0(i,kk,rainwat)
                q_sol = q0(i,kk,ice_wat) + q0(i,kk,snowwat) + q0(i,kk,graupel)
-#ifdef MULTI_GASES
-               cpm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cp_air*vicpqd(q0(i,kk,:)) + q0(i,kk,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
-               cvm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cv_air*vicvqd(q0(i,kk,:)) + q0(i,kk,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
-#else
-               cpm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cp_air + q0(i,kk,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
-               cvm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cv_air + q0(i,kk,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
-#endif
-            enddo
-           elseif ( nwat==7 ) then
-            do i=is,ie
-               q_liq = q0(i,kk,liq_wat) + q0(i,kk,rainwat)
-               q_sol = q0(i,kk,ice_wat) + q0(i,kk,snowwat) + q0(i,kk,graupel) + q0(i,kk,hailwat)
+               IF ( nwat == 7 ) THEN
+               q_sol = q_sol + q0(i,kk,hailwat)
+               ENDIF
 #ifdef MULTI_GASES
                cpm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cp_air*vicpqd(q0(i,kk,:)) + q0(i,kk,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
                cvm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cv_air*vicvqd(q0(i,kk,:)) + q0(i,kk,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
@@ -911,10 +886,13 @@ contains
              cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
 #endif
           enddo
-       elseif ( nwat==6 ) then
+       elseif ( nwat >= 6 ) THEN
           do i=is,ie
              q_liq = q0(i,k,liq_wat) + q0(i,k,rainwat)
              q_sol = q0(i,k,ice_wat) + q0(i,k,snowwat) + q0(i,k,graupel)
+             IF ( nwat == 7 ) THEN
+              q_sol = q_sol + q0(i,k,hailwat)
+             ENDIF
 #ifdef MULTI_GASES
              cpm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cp_air*vicpqd(q0(i,k,:)) + q0(i,k,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
              cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air*vicvqd(q0(i,k,:)) + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
@@ -923,19 +901,6 @@ contains
              cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
 #endif
           enddo
-       elseif ( nwat==7 ) then
-          do i=is,ie
-             q_liq = q0(i,k,liq_wat) + q0(i,k,rainwat)
-             q_sol = q0(i,k,ice_wat) + q0(i,k,snowwat) + q0(i,k,graupel) + q0(i,k,hailwat)
-#ifdef MULTI_GASES
-             cpm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cp_air*vicpqd(q0(i,k,:)) + q0(i,k,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
-             cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air*vicvqd(q0(i,k,:)) + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
-#else
-             cpm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cp_air + q0(i,k,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
-             cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air + q0(i,k,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
-#endif
-          enddo
-
        endif
 
           do i=is,ie
@@ -994,16 +959,10 @@ contains
          do i=is,ie
             qcon(i,k) = q0(i,k,liq_wat)+q0(i,k,ice_wat)+q0(i,k,snowwat)+q0(i,k,rainwat)
          enddo
-   elseif ( nwat==6 ) then
+   else
       do k=1,kbot
          do i=is,ie
             qcon(i,k) = q0(i,k,liq_wat)+q0(i,k,ice_wat)+q0(i,k,snowwat)+q0(i,k,rainwat)+q0(i,k,graupel)
-         enddo
-      enddo
-   elseif ( nwat==7 ) then
-      do k=1,kbot
-         do i=is,ie
-            qcon(i,k) = q0(i,k,liq_wat)+q0(i,k,ice_wat)+q0(i,k,snowwat)+q0(i,k,rainwat)+q0(i,k,graupel)+q0(i,k,hailwat)
          enddo
       enddo
    endif
@@ -1202,22 +1161,13 @@ contains
                cvm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cv_air + q0(i,kk,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
 #endif
             enddo
-           elseif ( nwat == 6 ) then
+           elseif ( nwat >= 6 ) THEN
             do i=is,ie
                q_liq = q0(i,kk,liq_wat) + q0(i,kk,rainwat)
                q_sol = q0(i,kk,ice_wat) + q0(i,kk,snowwat) + q0(i,kk,graupel)
-#ifdef MULTI_GASES
-               cpm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cp_air*vicpqd(q0(i,kk,:)) + q0(i,kk,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
-               cvm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cv_air*vicvqd(q0(i,kk,:)) + q0(i,kk,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
-#else
-               cpm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cp_air + q0(i,kk,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
-               cvm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cv_air + q0(i,kk,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
-#endif
-            enddo
-           elseif ( nwat == 7 ) then
-            do i=is,ie
-               q_liq = q0(i,kk,liq_wat) + q0(i,kk,rainwat)
-               q_sol = q0(i,kk,ice_wat) + q0(i,kk,snowwat) + q0(i,kk,graupel) + q0(i,kk,hailwat)
+               IF ( nwat == 7 ) THEN
+                 q_sol = q_sol + q0(i,kk,hailwat)
+               ENDIF
 #ifdef MULTI_GASES
                cpm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cp_air*vicpqd(q0(i,kk,:)) + q0(i,kk,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
                cvm(i) = (1.-(q0(i,kk,sphum)+q_liq+q_sol))*cv_air*vicvqd(q0(i,kk,:)) + q0(i,kk,sphum)*cv_vap   + q_liq*c_liq + q_sol*c_ice
@@ -1270,7 +1220,7 @@ contains
 ! Saturation adjustment
 !----------------------
 #ifndef GFS_PHYS
-  if ( nwat == 6 ) then
+  if ( nwat >= 6 ) then
     do k=1, kbot
       if ( hydrostatic ) then
         do i=is, ie
@@ -1282,6 +1232,9 @@ contains
 #endif
            q_liq = q0(i,k,liq_wat) + q0(i,k,rainwat)
            q_sol = q0(i,k,ice_wat) + q0(i,k,snowwat) + q0(i,k,graupel)
+               IF ( nwat == 7 ) THEN
+                 q_sol = q_sol + q0(i,k,hailwat)
+               ENDIF
 #ifdef MULTI_GASES
            cpm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cp_air*vicpqd(q0(i,k,:)) + q0(i,k,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
 #else
@@ -1295,67 +1248,9 @@ contains
            den(i,k) = -delp(i,j,k)/(grav*delz(i,j,k))
            q_liq = q0(i,k,liq_wat) + q0(i,k,rainwat)
            q_sol = q0(i,k,ice_wat) + q0(i,k,snowwat) + q0(i,k,graupel)
-#ifdef MULTI_GASES
-           cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air*vicvqd(q0(i,k,:)) + q0(i,k,sphum)*cv_vap + q_liq*c_liq + q_sol*c_ice
-#else
-           cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air + q0(i,k,sphum)*cv_vap + q_liq*c_liq + q_sol*c_ice
-#endif
-           lcp2(i) = (Lv0+dc_vap*t0(i,k)) / cvm(i)
-           icp2(i) = (Li0+dc_ice*t0(i,k)) / cvm(i)
-        enddo
-      endif
-
-! Prevent super saturation over water:
-       do i=is, ie
-          qsw = wqs2(t0(i,k), den(i,k), dqsdt)
-           dq = q0(i,k,sphum) - qsw
-          if ( dq > 0. ) then   ! remove super-saturation
-             tcp3 = lcp2(i) + icp2(i)*min(1., dim(tice,t0(i,k))/40.)
-              tmp = dq/(1.+tcp3*dqsdt)
-             t0(i,k) = t0(i,k) + tmp*lcp2(i)
-             q0(i,k,  sphum) = q0(i,k,  sphum) - tmp
-             q0(i,k,liq_wat) = q0(i,k,liq_wat) + tmp
-! Grid box mean is saturated; 50% or higher cloud cover
-             if (cld_amt .gt. 0) then
-               qa(i,j,k,cld_amt) = max(0.5, min(1., qa(i,j,k,cld_amt)+25.*tmp/qsw))
-             end if
-          endif
-! Freezing
-          tmp = tice-40. - t0(i,k)
-          if( tmp>0.0 .and. q0(i,k,liq_wat)>0. ) then
-              dh = min( q0(i,k,liq_wat), q0(i,k,liq_wat)*tmp*0.125, tmp/icp2(i) )
-              q0(i,k,liq_wat) = q0(i,k,liq_wat) - dh
-              q0(i,k,ice_wat) = q0(i,k,ice_wat) + dh
-              t0(i,k) =  t0(i,k) + dh*icp2(i)
-          endif
-       enddo
-    enddo
-  endif
-  if ( nwat == 7 ) then
-    do k=1, kbot
-      if ( hydrostatic ) then
-        do i=is, ie
-! Compute pressure hydrostatically
-#ifdef MULTI_GASES
-           den(i,k) = pm(i,k)/(rdgas*t0(i,k)*virq(q0(i,k,:)))
-#else
-           den(i,k) = pm(i,k)/(rdgas*t0(i,k)*(1.+xvir*q0(i,k,sphum)))
-#endif
-           q_liq = q0(i,k,liq_wat) + q0(i,k,rainwat)
-           q_sol = q0(i,k,ice_wat) + q0(i,k,snowwat) + q0(i,k,graupel) + q0(i,k,hailwat)
-#ifdef MULTI_GASES
-           cpm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cp_air*vicpqd(q0(i,k,:)) + q0(i,k,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
-#else
-           cpm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cp_air + q0(i,k,sphum)*cp_vapor + q_liq*c_liq + q_sol*c_ice
-#endif
-           lcp2(i) = hlv / cpm(i)
-           icp2(i) = hlf / cpm(i)
-        enddo
-      else
-        do i=is, ie
-           den(i,k) = -delp(i,j,k)/(grav*delz(i,j,k))
-           q_liq = q0(i,k,liq_wat) + q0(i,k,rainwat)
-           q_sol = q0(i,k,ice_wat) + q0(i,k,snowwat) + q0(i,k,graupel) + q0(i,k,hailwat)
+               IF ( nwat == 7 ) THEN
+                 q_sol = q_sol + q0(i,k,hailwat)
+               ENDIF
 #ifdef MULTI_GASES
            cvm(i) = (1.-(q0(i,k,sphum)+q_liq+q_sol))*cv_air*vicvqd(q0(i,k,:)) + q0(i,k,sphum)*cv_vap + q_liq*c_liq + q_sol*c_ice
 #else

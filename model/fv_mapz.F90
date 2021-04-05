@@ -225,7 +225,7 @@ contains
   real rcp, rg, rrg, bkh, dtmp, k1k
   integer:: i,j,k
   integer:: kdelz
-  integer:: nt, liq_wat, ice_wat, rainwat, snowwat, cld_amt, graupel, hailwat, ccn_cm3, iq, n, kp, k_next
+  integer:: nt, liq_wat, ice_wat, rainwat, snowwat, cld_amt, graupel, hailwat, ccn_cm3, iq, n, kmp, kp, k_next
   integer :: ierr
 
       ccpp_associate: associate( fast_mp_consv => CCPP_interstitial%fast_mp_consv, &
@@ -3551,6 +3551,7 @@ endif        ! end last_step check
         cpm(i) = (1.-(qv(i)+qd(i)))*cp_air + qv(i)*cp_vapor + ql(i)*c_liq + qs(i)*c_ice
 #endif
      enddo
+
   case(7)
      do i=is,ie 
         qv(i) = q(i,j,k,sphum)
