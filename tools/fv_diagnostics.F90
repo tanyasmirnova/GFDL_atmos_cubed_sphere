@@ -2644,14 +2644,11 @@ contains
             do j=jsc,jec
                do i=isc,iec
                   do k=2,npz
-                     if (Atm(n)%flagstruct%nwat==6) then
-                        tmp = atm(n)%q(i,j,k,liq_wat)+atm(n)%q(i,j,k,rainwat)+atm(n)%q(i,j,k,ice_wat)+  &
-                              atm(n)%q(i,j,k,snowwat)+atm(n)%q(i,j,k,graupel) 
-                     elseif (Atm(n)%flagstruct%nwat==7) then
-                        tmp = atm(n)%q(i,j,k,liq_wat)+atm(n)%q(i,j,k,rainwat)+atm(n)%q(i,j,k,ice_wat)+  &
-                              atm(n)%q(i,j,k,snowwat)+atm(n)%q(i,j,k,graupel)+atm(n)%q(i,j,k,hailwat)
-                     endif
-
+                     tmp = atm(n)%q(i,j,k,liq_wat)+atm(n)%q(i,j,k,rainwat)+atm(n)%q(i,j,k,ice_wat)+  &
+                           atm(n)%q(i,j,k,snowwat)+atm(n)%q(i,j,k,graupel) 
+                     IF ( Atm(n)%flagstruct%nwat==7) THEN
+                       tmp = tmp + atm(n)%q(i,j,k,hailwat)
+                     ENDIF
                      if( tmp>5.e-6 ) then
                          a2(i,j) = Atm(n)%pt(i,j,k)
                          var1(i,j) = 0.01*Atm(n)%pe(i,k,j)
