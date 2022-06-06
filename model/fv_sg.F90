@@ -1495,7 +1495,8 @@ contains
                                  pt, ql, qr, qi, qs, qg
  real, intent(inout), OPTIONAL, dimension(is-ng:ie+ng,js-ng:je+ng,kbot):: qa
 ! Local:
- logical:: sat_adj = .false.
+ logical:: sat_adj = .true.
+ !!!!logical:: sat_adj = .false.
  real, parameter :: t48 = tice - 48.
 #ifdef MULTI_GASES
  real, dimension(is-ng:ie+ng,js-ng:je+ng,kbot):: qv
@@ -1646,6 +1647,10 @@ contains
              qg2(i,j) = qg2(i,j) + dq
              qv2(i,j) = qv2(i,j) - dq
              pt2(i,j) = pt2(i,j) + dq*(icpk(i,j)+lcpk(i,j))
+        endif
+!tgs--  Give up and set graupel to zero 
+        if ( qg2(i,j)<0.) then
+             qg2(i,j) = 0.
         endif
 
 !--------------
